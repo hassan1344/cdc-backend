@@ -1,0 +1,15 @@
+stages:
+  - deploy
+
+deploy_dev:
+  stage: deploy
+  only:
+    - dev
+  before_script:
+    - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )"
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - ssh-keyscan pg06.regifor.de >> ~/.ssh/known_hosts
+  script:
+    - ssh pg06-web@pg06.regifor.de 'bash ~/deploy_scripts/deploy_dev.sh'
