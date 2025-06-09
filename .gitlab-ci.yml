@@ -14,11 +14,13 @@ deploy_dev:
     - mkdir -p ~/.ssh
     - ssh-keyscan pg06.regifor.de >> ~/.ssh/known_hosts
   script:
-    - set -ex
+    - set -ex # Enables debug output for each command
+    - echo "Testing SSH connection..."
+    - ssh -vvv -o StrictHostKeyChecking=no pg06-web@pg06.regifor.de 'echo "SSH to remote succeeded."'
+    - echo "Now running remote deploy script..."
     - |
       ssh -vvv -o StrictHostKeyChecking=no pg06-web@pg06.regifor.de <<'EOF'
         set -ex
-        echo "Running on $(hostname)"
-        bash /home/pg06-web/deploy_scripts/deploy_dev.sh || { echo "Remote script failed"; exit 1; }
+        echo "Inside deploy script"
+        bash /home/deploy_scripts/deploy_dev.sh
       EOF
-    - echo "SSH command exited with code $?"
