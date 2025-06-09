@@ -22,4 +22,4 @@ deploy_dev:
         set -ex
         echo "Inside remote script"
         bash /home/deploy_scripts/deploy_dev.sh
-EOF
+      EOF
