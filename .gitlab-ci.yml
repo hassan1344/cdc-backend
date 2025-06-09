@@ -8,11 +8,13 @@ deploy_dev:
   only:
     - dev
   before_script:
+    - echo "== BEFORE SCRIPT START =="
     - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - ssh-keyscan pg06.regifor.de >> ~/.ssh/known_hosts
+    - echo "== BEFORE SCRIPT END =="
   script:
     - echo "Testing SSH connection..."
     - ssh -vvv -o StrictHostKeyChecking=no pg06-web@pg06.regifor.de 'echo "SSH connection worked!"'
