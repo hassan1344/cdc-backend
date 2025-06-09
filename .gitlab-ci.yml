@@ -13,15 +13,6 @@ deploy_dev:
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
-    - ssh-keyscan pg06.regifor.de >> ~/.ssh/known_hosts
-    - echo "== BEFORE SCRIPT END =="
+
   script:
-    - echo "Testing SSH connection..."
-    - ssh -vvv -o StrictHostKeyChecking=no pg06-web@pg06.regifor.de 'echo "SSH connection worked!"'
-    - echo "Now running remote deploy script..."
-    - |
-      ssh -vvv -o StrictHostKeyChecking=no pg06-web@pg06.regifor.de <<'EOF'
-        set -ex
-        echo "Inside remote script"
-        bash /home/deploy_scripts/deploy_dev.sh
-      EOF
+    - ssh -o StrictHostKeyChecking=no pg06-web@pg06.regifor.de 'bash /home/deploy_scripts/deploy_dev.sh'
