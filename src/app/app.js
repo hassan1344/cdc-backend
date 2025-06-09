@@ -13,7 +13,7 @@ app.use((req, res, next) => {
 });
 
 app.get("/api/", (req, res) => {
-  return res.send("Service is available.");
+  return res.send("Service is available...");
 });
 
 //------------------Routes here------------------------------
