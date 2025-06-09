@@ -3,6 +3,8 @@ stages:
 
 deploy_dev:
   stage: deploy
+  tags:
+    - ci-cd-job-runner
   only:
     - dev
   before_script:
