@@ -8,19 +8,18 @@ deploy_dev:
   only:
     - dev
   before_script:
-    - "which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )"
+    - which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - ssh-keyscan pg06.regifor.de >> ~/.ssh/known_hosts
   script:
-    - set -ex # Enables debug output for each command
     - echo "Testing SSH connection..."
-    - ssh -vvv -o StrictHostKeyChecking=no pg06-web@pg06.regifor.de 'echo "SSH to remote succeeded."'
+    - ssh -vvv -o StrictHostKeyChecking=no pg06-web@pg06.regifor.de 'echo "SSH connection worked!"'
     - echo "Now running remote deploy script..."
     - |
       ssh -vvv -o StrictHostKeyChecking=no pg06-web@pg06.regifor.de <<'EOF'
         set -ex
-        echo "Inside deploy script"
+        echo "Inside remote script"
         bash /home/deploy_scripts/deploy_dev.sh
-      EOF
+EOF
