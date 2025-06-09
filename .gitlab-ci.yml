@@ -15,4 +15,4 @@ deploy_dev:
     - ssh-keyscan pg06.regifor.de >> ~/.ssh/known_hosts
   script:
     - set -x
-    - ssh -v pg06-web@pg06.regifor.de 'bash /home/pg06-web/deploy_scripts/deploy_dev.sh'
+    - ssh -vvv pg06-web@pg06.regifor.de 'bash /home/pg06-web/deploy_scripts/deploy_dev.sh'
