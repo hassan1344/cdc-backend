@@ -31,7 +31,7 @@ export default class Questionnaire extends Model {
         modelClass: "Patient.js",
         join: {
           from: "questionnaires.patient_id",
-          to: "patients.id",
+          to: "patient.user_id",
         },
       },
       diagnosis: {

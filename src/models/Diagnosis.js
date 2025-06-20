@@ -52,7 +52,7 @@ export default class Diagnosis extends Model {
         modelClass: "Doctor.js",
         join: {
           from: "diagnoses.doctor_id",
-          to: "doctors.id",
+          to: "doctor.user_id",
         },
       },
     };
