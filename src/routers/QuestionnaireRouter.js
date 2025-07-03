@@ -10,3 +10,8 @@ QuestionnaireRouter.get(
   "/:patient_id",
   QuestionnaireController.getQuestionnaireByPatientId
 );
+
+QuestionnaireRouter.put(
+  "/:questionnaire_id",
+  QuestionnaireController.updateQuestionnaire
+);

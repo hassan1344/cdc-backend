@@ -10,3 +10,10 @@ export const addQuestionnaireValidator = joi.object({
 export const getQuestionnaireByPatientValidator = joi.object({
   patient_id: joi.number().integer().required(),
 });
+
+export const updateQuestionnaireValidator = joi.object({
+  questionnaire_id: joi.number().integer().required(),
+
+  patient_id: joi.number().integer().required(),
+  responses: joi.array().items(joi.object().required()),
+});

@@ -1,3 +1,4 @@
+import { knexMaster } from "../config/db.js";
 import Patient from "../models/Patient.js";
 import Questionnaire from "../models/Questionnaire.js";
 
@@ -8,6 +9,7 @@ import logger from "../utils/logger/logger.js";
 import {
   addQuestionnaireValidator,
   getQuestionnaireByPatientValidator,
+  updateQuestionnaireValidator,
 } from "../utils/validators/QuestionnaireValidator.js";
 
 export const addQuestionnaire = async (req, res, next) => {
@@ -79,6 +81,57 @@ export const getQuestionnaireByPatientId = async (req, res, next) => {
       CustomSuccess.createSuccess(
         questionnaire,
         "Questionnaire retrieved successfully",
+        200
+      )
+    );
+  } catch (err) {
+    logger.error(err.message);
+    next(err);
+  }
+};
+
+export const updateQuestionnaire = async (req, res, next) => {
+  const { questionnaire_id } = req.params;
+  const { patient_id, responses } = req.body;
+
+  try {
+    await updateQuestionnaireValidator
+      .validateAsync({
+        questionnaire_id,
+        patient_id,
+        responses,
+      })
+      .catch((err) => {
+        throw CustomError.validation(err.message);
+      });
+
+    const questionnaire = await Questionnaire.query().findById(
+      questionnaire_id
+    );
+
+    if (!questionnaire) {
+      throw CustomError.notFound("Questionnaire not found.");
+    }
+
+    if (questionnaire.patient_id !== patient_id) {
+      throw CustomError.validation(
+        "Patient ID does not match the questionnaire's owner."
+      );
+    }
+
+    const updatedRecord = await Questionnaire.query().patchAndFetchById(
+      questionnaire_id,
+      {
+        patient_id,
+        responses,
+        updated_at: knexMaster.fn.now(),
+      }
+    );
+
+    return next(
+      CustomSuccess.createSuccess(
+        updatedRecord,
+        "Questionnaire updated successfully",
         200
       )
     );
