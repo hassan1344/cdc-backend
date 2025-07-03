@@ -19,6 +19,7 @@ export default class Questionnaire extends Model {
         date: { type: "string", format: "date-time" }, // Date of the questionnaire completion
         created_at: { type: "string", format: "date-time" },
         updated_at: { type: "string", format: "date-time" },
+
         responses: {
           type: "array",
           items: {
@@ -27,15 +28,21 @@ export default class Questionnaire extends Model {
               questionNumber: { type: "integer" },
               questionId: { type: "string" },
               sectionId: { type: "string" },
-              responseType: { type: "string" },
-              icfCode: { type: "string" },
-              selectedOption: { type: "integer" },
+              responseType: { type: "string", nullable: true },
+              icfCode: { type: "string", nullable: true },
+              selectedOption: { type: "integer", nullable: true },
               selectedOptions: {
                 type: "array",
                 items: { type: "string" },
+                nullable: true,
               },
-              selectedValue: { type: "string" },
-              scaleValue: { type: "integer" },
+              selectedValue: { type: "string", nullable: true },
+              scaleValue: { type: "integer", nullable: true },
+              selectedValues: {
+                type: "array",
+                items: { type: "string" },
+                nullable: true,
+              },
             },
             required: ["questionNumber", "questionId", "responseType"],
           },

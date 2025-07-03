@@ -7,9 +7,10 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production node src/server.js",
     "dev": "cross-env NODE_ENV=development nodemon src/server.js",
-    "migrate-dev" : "cross-env NODE_ENV=development npx knex migrate:latest",
-    "migrate-make-dev" : "cross-env NODE_ENV=development npx knex migrate:make",
-    "rollback-dev" : "cross-env NODE_ENV=development npx knex migrate:rollback"
+    "migrate-dev": "cross-env NODE_ENV=development npx knex migrate:latest",
+    "migrate-make-dev": "cross-env NODE_ENV=development npx knex migrate:make",
+    "rollback-dev": "cross-env NODE_ENV=development npx knex migrate:rollback",
+    "status-dev": "cross-env NODE_ENV=development npx knex migrate:status"
   },
   "repository": {
     "type": "git",

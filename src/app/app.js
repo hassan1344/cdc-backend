@@ -5,11 +5,14 @@ import morgan from "morgan";
 import morganBody from "morgan-body";
 import { ResHandler } from "../utils/customResponse/responseHandler.js";
 import { AuthRouter } from "../routers/AuthRouter.js";
+import { QuestionnaireRouter } from "../routers/QuestionnaireRouter.js";
+import { PatientRouter } from "../routers/PatientRouter.js";
 
 const app = express();
-const APP_PREFIX = "/api/v1"
-const AUTH_PREFIX = "/auth"
-
+const APP_PREFIX = "/api/v1";
+const AUTH_PREFIX = "/auth";
+const QUESTIONNAIRE_PREFIX = "/questionnaire";
+const PATIENT_PREFIX = "/patient";
 
 app.use(bodyParser.json());
 
@@ -32,6 +35,8 @@ app.get("/api/", (req, res) => {
 
 //------------------Routes here------------------------------
 app.use(APP_PREFIX + AUTH_PREFIX, AuthRouter);
+app.use(APP_PREFIX + QUESTIONNAIRE_PREFIX, QuestionnaireRouter);
+app.use(APP_PREFIX + PATIENT_PREFIX, PatientRouter);
 //------------------------------------------------------------
 
 app.use(ResHandler);
