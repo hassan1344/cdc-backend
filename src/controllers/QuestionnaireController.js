@@ -24,6 +24,19 @@ export const addQuestionnaire = async (req, res, next) => {
       throw CustomError.notFound("Patient not found with this id");
     }
 
+    if (type === "pre") {
+      const existingPreRecord = await Questionnaire.query().findOne({
+        patient_id,
+        type: "pre",
+      });
+
+      if (existingPreRecord) {
+        throw CustomError.badRequest(
+          "A 'pre' questionnaire already exists for this patient"
+        );
+      }
+    }
+
     const insertedRecord = await Questionnaire.query().insert({
       patient_id,
       type,
@@ -54,9 +67,9 @@ export const getQuestionnaireByPatientId = async (req, res, next) => {
         throw CustomError.validation(err.message);
       });
 
-    const questionnaire = await Questionnaire.query().findOne({ patient_id });
+    const questionnaire = await Questionnaire.query().where({ patient_id });
 
-    if (!questionnaire) {
+    if (questionnaire.length == 0) {
       throw CustomError.notFound(
         `No questionnaire found for patient with ID ${patient_id}`
       );
