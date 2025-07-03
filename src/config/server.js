@@ -4,4 +4,5 @@ dotenv.config({ path: `.env.${process.env.NODE_ENV}` });
 
 export default {
   PORT: process.env.PORT,
+  JWT_SECRET: process.env.JWT_SECRET,
 };
