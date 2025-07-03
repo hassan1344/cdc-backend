@@ -1,7 +1,7 @@
 import { Model } from "objection";
 
 export default class Questionnaire extends Model {
-  static tableName = "questionnaire";
+  static tableName = "questionnaires";
 
   static get idColumn() {
     return "id";
@@ -15,11 +15,31 @@ export default class Questionnaire extends Model {
       properties: {
         id: { type: "integer" },
         patient_id: { type: "integer" },
-        type: { type: "string", enum: ["pre", "post"] }, // part 1 or part 2
-        responses: { type: "object" }, // json fields from the form
-        date: { type: "string", format: "date-time" },
+        type: { type: "string", enum: ["pre", "post"] }, // pre = vorerhebung, post = erfolgskontrolle
+        date: { type: "string", format: "date-time" }, // Date of the questionnaire completion
         created_at: { type: "string", format: "date-time" },
         updated_at: { type: "string", format: "date-time" },
+        responses: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              questionNumber: { type: "integer" },
+              questionId: { type: "string" },
+              sectionId: { type: "string" },
+              responseType: { type: "string" },
+              icfCode: { type: "string" },
+              selectedOption: { type: "integer" },
+              selectedOptions: {
+                type: "array",
+                items: { type: "string" },
+              },
+              selectedValue: { type: "string" },
+              scaleValue: { type: "integer" },
+            },
+            required: ["questionNumber", "questionId", "responseType"],
+          },
+        },
       },
     };
   }
