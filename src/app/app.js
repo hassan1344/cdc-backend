@@ -2,6 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import helmet from "helmet";
 import morgan from "morgan";
+import cors from "cors";
 import morganBody from "morgan-body";
 import { ResHandler } from "../utils/customResponse/responseHandler.js";
 import { AuthRouter } from "../routers/AuthRouter.js";
@@ -15,6 +16,8 @@ const QUESTIONNAIRE_PREFIX = "/questionnaire";
 const PATIENT_PREFIX = "/patient";
 
 app.use(bodyParser.json());
+
+app.use(cors());
 
 app.use(morgan("dev"));
 
