@@ -34,3 +34,21 @@ export const createPatient = async (req, res, next) => {
     next(err);
   }
 };
+export const getAllPatients = async (req, res, next) => {
+  try {
+    const patients = await Patient.query();
+    // .withGraphFetched("auth")
+    // .select("patients.*", "auths.email as email", "auths.role as role")
+    // .leftJoin("auths", "patients.user_id", "auths.id");
+
+    return next(
+      CustomSuccess.createSuccess(
+        patients,
+        "Patients retrieved successfully",
+        200
+      )
+    );
+  } catch (error) {
+    next(error);
+  }
+};

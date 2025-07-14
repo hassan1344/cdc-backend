@@ -1,4 +1,3 @@
-// models/User.js
 import { Model } from "objection";
 import Patient from "./Patient.js";
 import Doctor from "./Doctor.js";
@@ -14,7 +13,7 @@ class Auth extends Model {
       required: ["email", "password", "role"],
       properties: {
         id: { type: "integer" },
-        email: { type: "string", format: "email" },
+        email: { type: "string" }, // remove unique:true
         password: { type: "string" },
         role: { type: "string", enum: ["patient", "doctor"] },
         created_at: { type: "string", format: "date-time" },
@@ -29,7 +28,7 @@ class Auth extends Model {
         relation: Model.HasOneRelation,
         modelClass: Patient,
         join: {
-          from: "users.id",
+          from: "auths.id",
           to: "patients.user_id",
         },
       },
@@ -37,7 +36,7 @@ class Auth extends Model {
         relation: Model.HasOneRelation,
         modelClass: Doctor,
         join: {
-          from: "users.id",
+          from: "auths.id",
           to: "doctors.user_id",
         },
       },
