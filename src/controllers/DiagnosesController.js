@@ -40,9 +40,9 @@ const createDiagnostic = async (req, res, next) => {
       await Patient.query().insert({
         user_id: auth.id,
         name: req.body.name ? req.body.name : "Patient" + Date.now(),
-        diabetes_type: req.body.diabetes_type ? req.body.diabetes_type : null,
-        mrba_status: req.body.mrba_status ? req.body.mrba_status : null,
-        risk_group: req.body.risk_group ? req.body.risk_group : null,
+        // diabetes_type: req.body.diabetes_type ? req.body.diabetes_type : null,
+        // mrba_status: req.body.mrba_status ? req.body.mrba_status : null,
+        // risk_group: req.body.risk_group ? req.body.risk_group : null,
         patientencode: email,
         befundbogenID: 1,
         partnerID: req.body.partnerID,
