@@ -20,7 +20,9 @@ export const addQuestionnaire = async (req, res, next) => {
       throw CustomError.validation(err.message);
     });
 
-    const patient = await Patient.query().findOne({ user_id: patient_id });
+    const patient = await Patient.query().findOne({
+      patientencode: patient_id,
+    });
 
     if (!patient) {
       throw CustomError.notFound("Patient not found with this id");
