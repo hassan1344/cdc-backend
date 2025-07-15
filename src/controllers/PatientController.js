@@ -1,12 +1,21 @@
 import Patient from "../models/Patient.js";
 import CustomError from "../utils/customResponse/customError.js";
 import CustomSuccess from "../utils/customResponse/customSuccess.js";
-import { createPatientValidator } from "../utils/validators/PatientValidator.js";
+import { createPatientValidator, updatePatientValidator } from "../utils/validators/PatientValidator.js";
 
-// CREATE PATIENT API (Your existing code)
+// CREATE PATIENT API (Fixed to include all required fields)
 export const createPatient = async (req, res, next) => {
-  const { user_id, name, gender, diabetes_type, mrba_status, risk_group } =
-    req.body;
+  const { 
+    user_id, 
+    name, 
+    gender, 
+    diabetes_type, 
+    mrba_status, 
+    risk_group,
+    patientencode,
+    befundbogenID,
+    partnerID
+  } = req.body;
 
   try {
     await createPatientValidator.validateAsync(req.body).catch((err) => {
@@ -20,11 +29,16 @@ export const createPatient = async (req, res, next) => {
       diabetes_type,
       mrba_status,
       risk_group,
+      patientencode,
+      befundbogenID: befundbogenID || 1, // Default to 1 if not provided
+      partnerID: partnerID || 1, // Default to 1 if not provided
+      created_at: new Date().toISOString().slice(0, 19).replace("T", " "),
+      updated_at: new Date().toISOString().slice(0, 19).replace("T", " "),
     });
 
     return next(
       CustomSuccess.createSuccess(
-        newPatient.user_id,
+        newPatient,
         "Patient profile created successfully",
         200
       )
@@ -34,13 +48,11 @@ export const createPatient = async (req, res, next) => {
   }
 };
 
-// GET ALL PATIENTS API (Your existing code)
+// GET ALL PATIENTS API
 export const getAllPatients = async (req, res, next) => {
   try {
-    const patients = await Patient.query();
-    // .withGraphFetched("auth")
-    // .select("patients.*", "auths.email as email", "auths.role as role")
-    // .leftJoin("auths", "patients.user_id", "auths.id");
+    const patients = await Patient.query()
+      .orderBy('created_at', 'desc');
 
     return next(
       CustomSuccess.createSuccess(
@@ -54,63 +66,68 @@ export const getAllPatients = async (req, res, next) => {
   }
 };
 
-// UPDATE PATIENT API (New code)
+// UPDATE PATIENT API (Fixed with proper validation)
 export const updatePatient = async (req, res, next) => {
+  console.log("=== UPDATE PATIENT FUNCTION CALLED ===");
+  console.log("Request params:", req.params);
+  console.log("Request body:", req.body);
+  
   try {
     const { patientCode } = req.params;
     const { name, gender, diabetes_type, mrba_status, risk_group } = req.body;
     
-    // Validate required fields
-    if (!name || name.trim().length === 0) {
-      return next(CustomError.createError("Name is required", 400));
-    }
+    console.log("Extracted patientCode:", patientCode);
+    console.log("Extracted fields:", { name, gender, diabetes_type, mrba_status, risk_group });
     
-    if (name.length > 255) {
-      return next(CustomError.createError("Name cannot exceed 255 characters", 400));
-    }
+    // Use the update validator instead of create validator
+    await updatePatientValidator.validateAsync(req.body).catch((err) => {
+      console.log("Validation error:", err.message);
+      throw CustomError.validation(err.message);
+    });
     
-    // Validate gender enum
-    const validGenders = ["male", "female", "other"];
-    if (gender && !validGenders.includes(gender)) {
-      return next(CustomError.createError("Gender must be one of: male, female, other", 400));
-    }
-    
-    // Validate diabetes_type enum
-    const validDiabetesTypes = ["Type 1", "Type 2", "Other"];
-    if (diabetes_type && !validDiabetesTypes.includes(diabetes_type)) {
-      return next(CustomError.createError("Diabetes type must be one of: Type 1, Type 2, Other", 400));
-    }
+    console.log("Validation passed successfully");
     
     // Find patient by patientencode
+    console.log("Looking for patient with code:", patientCode);
     const existingPatient = await Patient.query()
       .where('patientencode', patientCode)
       .first();
     
+    console.log("Found patient:", existingPatient ? "YES" : "NO");
+    
     if (!existingPatient) {
+      console.log("Patient not found, returning 404");
       return next(CustomError.createError(`Patient with code ${patientCode} not found`, 404));
     }
     
-    // Update patient data
+    // Build update data object with only provided fields
     const updateData = {
-      name: name.trim(),
       updated_at: new Date().toISOString().slice(0, 19).replace("T", " "),
     };
     
-    // Add optional fields only if they are provided
+    // Only add fields that are provided in the request
+    if (name) updateData.name = name.trim();
     if (gender) updateData.gender = gender;
     if (diabetes_type) updateData.diabetes_type = diabetes_type;
     if (mrba_status) updateData.mrba_status = mrba_status;
     if (risk_group) updateData.risk_group = risk_group;
     
-    const updatedPatient = await Patient.query()
+    console.log("Update data to be applied:", updateData);
+    
+    // Update the patient
+    console.log("Updating patient in database...");
+    await Patient.query()
       .where('patientencode', patientCode)
-      .update(updateData)
-      .returning('*');
+      .update(updateData);
+    
+    console.log("Update completed, fetching updated patient...");
     
     // Get the updated patient data
     const patientData = await Patient.query()
       .where('patientencode', patientCode)
       .first();
+    
+    console.log("Returning success response with patient data");
     
     return next(
       CustomSuccess.createSuccess(
@@ -120,11 +137,14 @@ export const updatePatient = async (req, res, next) => {
       )
     );
   } catch (error) {
+    console.log("=== ERROR IN UPDATE PATIENT ===");
+    console.log("Error:", error);
+    console.log("Error message:", error.message);
     next(error);
   }
 };
 
-// GET PATIENT BY CODE API (New code)
+// GET PATIENT BY CODE API
 export const getPatientByCode = async (req, res, next) => {
   try {
     const { patientCode } = req.params;

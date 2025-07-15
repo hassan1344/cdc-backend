@@ -17,9 +17,9 @@ const updateDoctor = async (req, res, next) => {
       return next(CustomError.createError("Name cannot exceed 255 characters", 400));
     }
     
-    // Find doctor by ID
+    // Find doctor by user_id (not id)
     const existingDoctor = await Doctor.query()
-      .where('id', doctorId)
+      .where('user_id', doctorId)  // Changed from 'id' to 'user_id'
       .first();
     
     if (!existingDoctor) {
@@ -32,19 +32,18 @@ const updateDoctor = async (req, res, next) => {
       updated_at: new Date().toISOString().slice(0, 19).replace("T", " "),
     };
     
-    const updatedDoctor = await Doctor.query()
-      .where('id', doctorId)
-      .update(updateData)
-      .returning('*');
+    await Doctor.query()
+      .where('user_id', doctorId)  // Changed from 'id' to 'user_id'
+      .update(updateData);
     
     // Get the updated doctor data
     const doctorData = await Doctor.query()
-      .where('id', doctorId)
+      .where('user_id', doctorId)  // Changed from 'id' to 'user_id'
       .first();
     
     return next(
       CustomSuccess.createSuccess(
-        { doctor: doctorData },
+        doctorData,
         `Doctor ${doctorId} updated successfully`,
         200
       )
@@ -54,13 +53,13 @@ const updateDoctor = async (req, res, next) => {
   }
 };
 
-// GET DOCTOR API (Additional utility method)
+// GET DOCTOR API
 const getDoctorById = async (req, res, next) => {
   try {
     const { doctorId } = req.params;
     
     const doctor = await Doctor.query()
-      .where('id', doctorId)
+      .where('user_id', doctorId)  // Changed from 'id' to 'user_id'
       .first();
     
     if (!doctor) {
@@ -69,7 +68,7 @@ const getDoctorById = async (req, res, next) => {
     
     return next(
       CustomSuccess.createSuccess(
-        { doctor },
+        doctor,
         `Doctor ${doctorId} retrieved successfully`,
         200
       )
@@ -79,7 +78,7 @@ const getDoctorById = async (req, res, next) => {
   }
 };
 
-// GET ALL DOCTORS API (Additional utility method)
+// GET ALL DOCTORS API
 const getAllDoctors = async (req, res, next) => {
   try {
     const doctors = await Doctor.query()
