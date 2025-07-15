@@ -9,6 +9,7 @@ import { AuthRouter } from "../routers/AuthRouter.js";
 import { QuestionnaireRouter } from "../routers/QuestionnaireRouter.js";
 import { PatientRouter } from "../routers/PatientRouter.js";
 import { DiagnosesRouter } from "../routers/DiagnosesRouter.js";
+import { DoctorRouter } from "../routers/DoctorRouter.js";
 
 const app = express();
 const APP_PREFIX = "/api/v1";
@@ -16,6 +17,7 @@ const AUTH_PREFIX = "/auth";
 const QUESTIONNAIRE_PREFIX = "/questionnaire";
 const PATIENT_PREFIX = "/patient";
 const DIAGNOSES_PREFIX = "/diagnoses";
+const DOCTOR_PREFIX = "/doctor";
 
 app.use(bodyParser.json());
 
@@ -43,6 +45,7 @@ app.use(APP_PREFIX + AUTH_PREFIX, AuthRouter);
 app.use(APP_PREFIX + QUESTIONNAIRE_PREFIX, QuestionnaireRouter);
 app.use(APP_PREFIX + PATIENT_PREFIX, PatientRouter);
 app.use(APP_PREFIX + DIAGNOSES_PREFIX, DiagnosesRouter);
+app.use(APP_PREFIX + DOCTOR_PREFIX, DoctorRouter);
 
 //------------------------------------------------------------
 

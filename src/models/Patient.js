@@ -9,7 +9,7 @@ export default class Patient extends Model {
   static get jsonSchema() {
     return {
       type: "object",
-      required: ["user_id", "patientencode"],
+      // REMOVED: required: ["user_id", "patientencode"], // This was causing the validation error
 
       properties: {
         user_id: { type: "integer" },

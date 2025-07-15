@@ -3,6 +3,7 @@ import MedizinischeDaten from "../models/medizinische_daten.js";
 import Auth from "../models/Auth.js";
 import CustomSuccess from "../utils/customResponse/customSuccess.js";
 import Patient from "../models/Patient.js";
+
 function generateRandomPassword(length = 12) {
   const chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:,.<>?";
@@ -81,7 +82,92 @@ const createDiagnostic = async (req, res, next) => {
   }
 };
 
+// GET API - Get All Diagnoses
+const getAllDiagnoses = async (req, res, next) => {
+  try {
+    const diagnoses = await MedizinischeDaten.query()
+      .orderBy('created_at', 'desc');
+    
+    return next(
+      CustomSuccess.createSuccess(
+        { diagnoses, count: diagnoses.length },
+        "All diagnoses retrieved successfully",
+        200
+      )
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+// GET API - Get Diagnoses by Doctor (Partner ID)
+const getDiagnosesByDoctor = async (req, res, next) => {
+  try {
+    const { doctorId } = req.params;
+    
+    // Convert doctorId to number for comparison
+    const partnerId = parseInt(doctorId);
+    
+    const diagnoses = await MedizinischeDaten.query()
+      .where('partnerID', partnerId)
+      .orderBy('created_at', 'desc');
+    
+    return next(
+      CustomSuccess.createSuccess(
+        { 
+          diagnoses, 
+          count: diagnoses.length,
+          doctorId: partnerId 
+        },
+        `Diagnoses for doctor ID ${partnerId} retrieved successfully`,
+        200
+      )
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
+// GET API - Get All Diagnoses by Patient
+const getDiagnosesByPatient = async (req, res, next) => {
+  try {
+    const { patientCode } = req.params;
+    
+    const diagnoses = await MedizinischeDaten.query()
+      .where('patientencode', patientCode)
+      .orderBy('created_at', 'desc');
+    
+    if (diagnoses.length === 0) {
+      return next(
+        CustomSuccess.createSuccess(
+          { diagnoses: [], count: 0 },
+          `No diagnoses found for patient code ${patientCode}`,
+          200
+        )
+      );
+    }
+    
+    return next(
+      CustomSuccess.createSuccess(
+        { 
+          diagnoses, 
+          count: diagnoses.length,
+          patientCode 
+        },
+        `Diagnoses for patient ${patientCode} retrieved successfully`,
+        200
+      )
+    );
+  } catch (error) {
+    next(error);
+  }
+};
+
 const DiagnosesController = {
   createDiagnostic,
+  getAllDiagnoses,
+  getDiagnosesByDoctor,
+  getDiagnosesByPatient,
 };
+
 export default DiagnosesController;
