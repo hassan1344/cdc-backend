@@ -38,3 +38,6 @@
    git checkout dev
    git pull origin dev
    git checkout -b feature/your-feature-name
+   
+
+[![System Architecture](./architecture_SDP.drawio.png)](./architecture_SDP.drawio.png)
